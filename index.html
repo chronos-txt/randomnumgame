@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecretNumber Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jersey+15&display=swap');
+        
+        body {
+            font-family: 'Jersey 15', serif;
+            background-color: gray;
+        }
+        
+        header {
+            justify-content: center;
+            margin: 0 auto;
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 1.5s steps(20, end), blink-caret .5s step-end infinite;
+        }
+
+        h1 {
+            font-size: 45px;
+        }
+
+        .start {
+            margin-left: 20%;
+            margin-right: 20%;
+            text-align: center;
+            
+        }
+
+        @keyframes typing {
+        from { width: 0 }
+        to { width: 45% }
+        }
+
+        button {
+            border: none;
+            font-family: 'Jersey 15', serif;
+            cursor:grab;
+            font-size: 20px;
+        }
+
+        #go {
+            font-size: 25px;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+        }
+       
+        header {
+            text-align: center;
+            /* add animation */
+
+        }
+
+        .trybox {
+            display: none;
+            text-align: center;
+
+        }
+
+        input {
+            width: 1.5rem;
+        }
+
+            
+        #tryNumbers {
+            font-size: 30px;
+        }
+
+        .divRestart {
+            display: none;
+            text-align: center;
+            justify-content: center;
+        }
+        
+        #winDiv {
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            font-size: 90px;
+            color: white;
+            text-shadow: 
+                2px 2px 0 #FF0000, 
+                -2px -2px 0 #FF7F00,
+                2px -2px 0 #FFFF00,
+                -2px 2px 0 #00FF00,
+                2px 2px 5px #0000FF,
+                -2px -2px 5px #4B0082,
+                2px -2px 5px #8B00FF;
+        }
+        
+        footer {
+            font-size: 24px;
+        }
+        </style>
+</head>
+<body>
+    <header>
+        <h1> Try to guess the secret number </h1>
+    </header>
+    <div class="box" id="box">
+        <div id="start" class="start">
+            <h1> How this game works??</h1>
+            <p>
+                This game is a "Guess the Secret Number", when you click the "Start" button,
+                a number from 0 to 9 will be generated and you will try to guess the number,
+                you have three attempts, if you get it wrong, you lose. 
+            </p>
+            <button id="go">GO!</button>
+        </div>
+        <div id="trybox" class="trybox">
+            <h2>Random number has been generated</h2>
+            <p>Remaining attempts:<label id="attempts" for="">3</label></p>
+            <input maxlength="1" name="" id="guess">
+            <button id="tryButton">Try</button>
+            <div>
+                <label for="" id="tryNumbers"></label>
+            </div>
+        </div>
+        <div id="winDiv"></div>
+        <div class="divRestart" id="divRestart">
+            <button id="restartButton"> RESTART </button>
+        </div>
+
+    </div>
+    <footer>
+        By Chronos
+    </footer>
+    
+    <script>
+        
+        let myText = 'You Win !!!';
+        let tryNums = [];
+        let guessCount = 0;
+        let guess = document.getElementById("guess");
+        let trybutton = document.getElementById("tryButton");
+        let randomNumber
+        let tryDiv = document.getElementById("trybox");
+        
+        document.getElementById("guess").value = '';
+        
+        go = new Audio('go.WAV');
+        fail = new Audio('fail.WAV');
+        win = new Audio('win.WAV');
+
+        document.getElementById("go").addEventListener("click", (e) => {
+            let start = document.getElementById("start");
+            go.play();
+            start.style.display = 'none';
+            tryDiv.style.display = 'block';
+            randomNumber = parseInt(Math.random() * 9)
+            console.log(randomNumber)
+        })
+        
+        trybutton.addEventListener("click", (e) => {
+            userTry()
+        } )
+        let count = 3;
+
+        function typeText(text, index, delay, outputID) {
+            let myText = "Olá, isso é um efeito de digitação!";
+            if (index < text.length) {
+                document.getElementById(outputID).innerHTML += text.charAt(index);
+                setTimeout(function() {
+                    typeText(text, index + 1, delay, outputID);
+                }, delay);
+            }
+        }
+
+        function userTry() {
+            let guessvalue = parseInt(guess.value);
+            if (guessvalue != null ) {
+                while (count > 0){
+                    if (guessvalue != randomNumber){
+                        fail.play();
+                        count--;
+                        tryNums.push(guess.value);
+                        document.getElementById("tryNumbers").innerText = tryNums;
+                        document.getElementById("guess").value = '';
+
+                        if (count === 0) {
+                            tryDiv.style.display = 'block';
+                            guess.style.display = 'none';
+                            trybutton.style.display = 'none';
+                            document.getElementById("divRestart").style.display = "block";
+                            
+
+                        }
+                        document.getElementById("attempts").innerText = count;
+                        return
+                    } else {
+                        guess.style.display = 'none';
+                        tryDiv.style.display = 'none';
+                        win.play();
+                        typeText(myText, 0, 50, "winDiv");
+                        setTimeout(function(){
+                            document.getElementById("divRestart").style.display = "block";}, 2000);
+                        return;
+                    }
+                }
+            }
+        }
+        
+        document.getElementById("restartButton").addEventListener("click", (e) => {
+            window.location.reload()
+        })
+    </script>
+</body>
+</html>
